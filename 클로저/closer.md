@@ -67,10 +67,9 @@ bar(); // ?
 
 위 예제의 foo 함수 내부에서 bar 함수가 호출되어 실행 중인 시점의 실행 컨텍스트는 다음과 같다.
 
-<figure style="text-align: center;">
-<img src="images/함수 객체의 내부 슬롯 [[Environment]]에는 상위 스코프가 저장된다.png" alt="함수 객체의 내부 슬롯 [[Environment]]에는 상위 스코프가 저장된다" />
-    <figcaption>함수 객체의 내부 슬롯 [[Environment]]에는 상위 스코프가 저장된다</figcaption>
-</figure>
+<img src="https://github.com/siggu/modern-javascript-study/blob/main/%ED%81%B4%EB%A1%9C%EC%A0%80/images/%ED%95%A8%EC%88%98%20%EA%B0%9D%EC%B2%B4%EC%9D%98%20%EB%82%B4%EB%B6%80%20%EC%8A%AC%EB%A1%AF%20%5B%5BEnvironment%5D%5D%EC%97%90%EB%8A%94%20%EC%83%81%EC%9C%84%20%EC%8A%A4%EC%BD%94%ED%94%84%EA%B0%80%20%EC%A0%80%EC%9E%A5%EB%90%9C%EB%8B%A4.png?raw=true" />
+
+> 함수 객체의 내부 슬롯 [[Environment]]에는 상위 스코프가 저장된다
 
 foo 함수와 bar 함수는 모두 전역에서 함수 선언문으로 정의되었다. 따라서 foo 함수와 bar 함수는 모두 전역 코드가 평가되는 시점에 평가되어 함수 객체를 생성하고 전역 객체 window의 메서드가 된다. 이때 생성된 함수 객체의 내부 슬롯 `[[Environment]]`에는 함수 정의가 평가된 시점, 즉 전역 코드 평가 시점에 실행 중인 실행 컨텍스트의 렉시컬 환경인 전역 렉시컬 환경의 참조가 저장된다(위 그림에서 ①)
 
@@ -119,35 +118,32 @@ outer 함수를 호출(③)하면 outer 함수는 중첩 함수 inner를 반환�
 
 위 예제에서 outer 함수가 평가되어 함수 객체를 생성할 때(①) 현재 실행 중인 실행 컨텍스트의 렉시컬 환경, 즉 전역 렉시컬 환경을 outer 함수 객체의 `[[Environment]]` 내부 슬롯에 상위 스코프로서 저장한다.
 
-<figure style="text-align: center;">
 <img src="images/전역 함수 객체의 상위 스코프 결정.png" alt="전역 함수 객체의 상위 스코프 결정" />
-    <figcaption>전역 함수 객체의 상위 스코프 결정</figcaption>
-</figure>
+
+> 전역 함수 객체의 상위 스코프 결정
 
 outer 함수를 호출하면 outer 함수의 렉시컬 환경이 생성되고 앞서 outer 함수 객체의 `[[Environment]]` 내부 슬롯에 저장된 전역 렉시컬 환경을 outer 함수 렉시컬 환경의 “외부 렉시컬 환경에 대한 참조”에 할당한다.
 
 그리고 중첩 함수 inner가 평가된다(② inner 함수는 함수 표현식으로 정의했기 때문에 런타임에 평가된다). 이때 중첩 함수 inner는 자신의 `[[Environment]]` 내부 슬롯에 현재 실행중인 실행 컨텍스트의 렉시컬 환경, 즉 outer 함수의 렉시컬 환경을 상위 스코프로서 저장한다.
 
-<figure style="text-align: center;">
 <img src="images/중첩 함수의 상위 스코프 결정.png" alt="중첩 함수의 상위 스코프 결정" />
-    <figcaption>중첩 함수의 상위 스코프 결정</figcaption>
-</figure>
+
+> 중첩 함수의 상위 스코프 결정
 
 outer 함수의 실행이 종료하면 inner 함수를 반환하면서 outer 함수의 생명 주기가 종료된다(③). 즉, outer 함수의 실행 컨텍스트가 실행 컨텍스트 스택에서 제거된다. 이때 **outer 함수의 실행 컨텍스트는 실행 컨텍스트 스택에서 제거되지만 outer 함수의 렉시컬 환경까지 소멸하는 것은 아니다.**
 
 outer 함수의 렉시컬 환경은 inner 함수의 `[[Environment]]` 내부 슬롯에 의해 참조되고 있고 inner 함수는 전역 변수 innerFunc에 의해 참조되고 있으므로 가비지 컬렉션의 대상이 되지 않기 때문이다.
 
-<figure style="text-align: center;">
 <img src="images/outer 함수의 실행 컨텍스트가 제거되어도 outer 함수의 렉시컬 환경은 유지된다..png" alt="outer 함수의 실행 컨텍스트가 제거되어도 outer 함수의 렉시컬 환경은 유지된다." />
-    <figcaption>outer 함수의 실행 컨텍스트가 제거되어도 outer 함수의 렉시컬 환경은 유지된다.</figcaption>
-</figure>
+
+> outer 함수의 실행 컨텍스트가 제거되어도 outer 함수의 렉시컬 환경은 유지된다.
 
 outer 함수가 반환한 inner 함수를 호출(④)하면 inner 함수의 실행 컨텍스트가 생성되고 실행 컨텍스트 스택에 푸시된다. 그리고 렉시컬 환경의 외부 렉시컬 환경에 대한 참조에는 inner 함수 객체의 `[[Environment]]` 내부 슬롯에 저장되어 있는 참조값이 할당된다.
 
-<figure style="text-align: center;">
 <img src="images/외부 함수가 소멸해도 반환한 중첩 함수는 외부 함수의 변수를 참조할 수 있다..png" alt="외부 함수가 소멸해도 반환한 중첩 함수는 외부 함수의 변수를 참조할 수 있다." />
-    <figcaption>외부 함수가 소멸해도 반환한 중첩 함수는 외부 함수의 변수를 참조할 수 있다.</figcaption>
-</figure>
+
+
+> 외부 함수가 소멸해도 반환한 중첩 함수는 외부 함수의 변수를 참조할 수 있다.
 
 <br >
 
