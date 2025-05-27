@@ -60,14 +60,14 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <ul>
       <li id="apple">Apple</li>
       <li id="banana">Banana</li>
       <li id="orange">Orange</li>
-    <ul>
+    </ul>
     <script src="app.js"></script>
   </body>
 </html>
@@ -195,7 +195,7 @@ CSS 파싱 과정과 마찬가지로 렌더링 엔진은 HTML을 한 줄씩 순�
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
     <script>
       /*
       DOM API인 document.getElementById는 DOM에서 id가 'apple'인 HTML 요소를 취득한다.
@@ -203,11 +203,11 @@ CSS 파싱 과정과 마찬가지로 렌더링 엔진은 HTML을 한 줄씩 순�
       DOM에는 id가 'apple'인 HTML 요소가 포함되어 있지 않다.
       따라서 아래 코드는 정상적으로 id가 'apple'인 HTML 요소를 취득하지 못한다.
       */
-     const $apple = document.getElementById('apple');
+      const $apple = document.getElementById('apple');
 
-     // id가 'apple'인 HTML 요소의 CSS color 프로퍼티 값을 변경한다.
-     // 이때 DOM에는 id가 'apple'인 HTML 요소가 포함되어 있지 않기 때문에 에러가 발생한다.
-     $apple.style.color = 'red'; // TypeError: Cannot read property 'style' of null
+      // id가 'apple'인 HTML 요소의 CSS color 프로퍼티 값을 변경한다.
+      // 이때 DOM에는 id가 'apple'인 HTML 요소가 포함되어 있지 않기 때문에 에러가 발생한다.
+      $apple.style.color = 'red'; // TypeError: Cannot read property 'style' of null
     </script>
   </head>
   <body>
@@ -215,7 +215,7 @@ CSS 파싱 과정과 마찬가지로 렌더링 엔진은 HTML을 한 줄씩 순�
       <li id="apple">Apple</li>
       <li id="banana">Banana</li>
       <li id="orange">Orange</li>
-    <ul>
+    </ul>
   </body>
 </html>
 ```
@@ -234,23 +234,23 @@ DOM API인 `document.getElementById('apple')`은 DOM에서 `id`가 `'apple'`인 
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <ul>
       <li id="apple">Apple</li>
       <li id="banana">Banana</li>
       <li id="orange">Orange</li>
-    <ul>
+    </ul>
     <script>
-      /*
-      DOM API인 document.getElementById는 DOM에서 id가 'apple'인 HTML 요소를 취득한다.
-      아래 코드가 실행되는 시점에는 id가 'apple'인 HTML 요소의 파싱이 완료되어 DOM에 포함되어 있기 때문에 정상적으로 동작한다.
-      */
-     const $apple = document.getElementById('apple');
+       /*
+       DOM API인 document.getElementById는 DOM에서 id가 'apple'인 HTML 요소를 취득한다.
+       아래 코드가 실행되는 시점에는 id가 'apple'인 HTML 요소의 파싱이 완료되어 DOM에 포함되어 있기 때문에 정상적으로 동작한다.
+       */
+      const $apple = document.getElementById('apple');
 
-     // apple 요소의 css color 프로퍼티 값을 변경한다.
-     $apple.style.color = 'red'; /
+      // apple 요소의 css color 프로퍼티 값을 변경한다.
+      $apple.style.color = 'red'; /
     </script>
   </body>
 </html>
