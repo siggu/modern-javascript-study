@@ -140,3 +140,320 @@ HTML 요소가 객체화된 요소 노드 객체는 HTML 요소가 갖는 공통
 DOM API를 사용하기 위해 지금까지 살펴본 노드 객체의 상속 구조를 자세히 알아야 할 필요는 없다. 상속 구조를 모른다 하더라도 노드 객체는 상속을 통해 마치 자신의 프로퍼티와 메서드처럼 DOM API를 사용할 수 있다.
 
 중요한 것은 DOM API, 즉 DOM이 제공하는 프로퍼티와 메서드를 사용하여 노드에 접근하고 HTML의 구조나 내용 또는 스타일 등을 동적으로 변경하는 방법을 익히는 것이다 프론트엔드 개발자에게 HTML은 단순히 태그와 어트리뷰트를 선언적으로 배치하여 뷰를 구성하는 것 이상의 의미를 가진다. 즉, HTML을 DOM과 연관 지어 바라보아야 한다.
+
+<br>
+
+## 요소 노드 취득
+
+HTML의 구조나 내용 또는 스타일 등을 동적으로 조작하려면 먼저 요소 노드를 취득해야 한다. 텍스트 노드는 요소 노드의 자식 노드이고, 어트리뷰트 노드는 요소 노드와 연결되어 있기 때문에 텍스트 노드나 어트리뷰트 노드를 조작하고자 할 때도 마찬가지다.
+
+예를 들어, HTML 문서 내의 `h1` 요소의 텍스트를 변경하고 싶은 경우를 생각해보자. 이 경우 먼저 DOM 트리 내에 존재하는 `h1` 요소 노드를 취득할 필요가 있다. 그리고 취득한 요소 노드의 자식 노드인 텍스트 노드를 변경하면 해당 `h1` 요소의 텍스트가 변경된다.
+
+이처럼 요소 노드의 취득은 HTML 요소를 조작하는 시작점이다. 이를 위해 DOM은 요소 노드를 취득할 수 있는 다양한 메서드를 제공한다.
+
+### `id`를 이용한 요소 노드 취득
+
+`Document.prototype.getElementById` 메서드는 인수로 전달한 `id` 어트리뷰트 값(이하 `id` 값)을 갖는 하나의 요소 노드를 탐색하여 반환한다. `getElementById` 메서드는 `Document.prototype`의 프로퍼티다. 따라서 반드시 문서 노드인 `document`를 통해 호출해야 한다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <li id="apple">Apple</li>
+      <li id="banana">Banana</li>
+      <li id="orange">Orange</li>
+    </ul>
+    <script>
+      // id 값이 'banana'인 요소 노드를 탐색하여 반환한다.
+      // 두 번째 li 요소가 파싱되어 생성된 요소 노드가 반환된다.
+      const $elem = document.getElementById('banana');
+
+      // 취득한 요소 노드의 style.color 프로퍼티 값을 변경한다.
+      $elem.style.color = 'red';
+    </script>
+  </body>
+</html>
+```
+
+`id` 값은 HTML 문서 내에서 유일한 값이어야 하며, `class` 어트리뷰트와는 달리 공백 문자로 구분하여 여러 개의 값을 가질 수 없다. 단, HTML 문서 내에 중복된 `id` 값을 갖는 HTML 요소가 여러 개 존재하더라도 어떠한 에러도 발생하지 않는다. 즉, HTML 문서 내에는 중복된 `id` 값을 갖는 요소가 여러 개 존재할 가능성이 있다.
+
+이러한 경우 `getElementById` 메서드는 인수로 전달된 `id` 값을 갖는 첫 번째 요소 노드만 반환한다. 즉, `getElementById` 메서드는 언제나 단 하나의 요소 노드를 반환한다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <li id="banana">Apple</li>
+      <li id="banana">Banana</li>
+      <li id="banana">Orange</li>
+    </ul>
+    <script>
+      // getElementById 메서드는 언제나 단 하나의 요소 노드를 반환한다.
+      // 첫 번째 li 요소가 파싱되어 생성된 요소 노드가 반환된다.
+      const $elem = document.getElementById('banana');
+
+      // 취득한 요소 노드의 style.color 프로퍼티 값을 변경한다.
+      $elem.style.color = 'red';
+    </script>
+  </body>
+</html>
+```
+
+만약 인수로 전달된 `id` 값을 갖는 HTML 요소가 존재하지 않는 경우 `getElementById` 메서드는 `null`을 반환한다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <li id="apple">Apple</li>
+      <li id="banana">Banana</li>
+      <li id="orange">Orange</li>
+    </ul>
+    <script>
+      // id 값이 'grape'인 요소 노드를 탐색하여 반환한다. null이 반환된다.
+      const $elem = document.getElementById('grape');
+
+      // 취득한 요소 노드의 style.color 프로퍼티 값을 변경한다.
+      $elem.style.color = 'red';
+      // -> TypeError: Cannot read property 'style' of null
+    </script>
+  </body>
+</html>
+```
+
+HTML 요소에 `id` 어트리뷰트를 부여하면 `id` 값과 동일한 이름의 전역 변수가 암묵적으로 선언되고 해당 노드 객체가 할당되는 부수 효과가 있다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo"></div>
+    <script>
+      // id 값과 동일한 이름의 전역 변수가 암묵적으로 선언되고 해당 노드 객체가 할당된다.
+      console.log(foo === document.getElementById('foo')); // true
+
+      // 암묵적 전역으로 생성된 전역 프로퍼티는 삭제되지만 전역 변수는 삭제되지 않는다.
+      delete foo;
+      console.log(foo); // <div id="foo"></div>
+    </script>
+  </body>
+</html>
+```
+
+단 `id` 값과 동일한 이름의 전역 변수가 이미 선언되어 있으면 이 전역 변수에 노드 객체가 재할당되지 않는다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo"></div>
+    <script>
+      let foo = 1;
+
+      // id 값과 동일한 이름의 전역 변수가 이미 선언되어 있으면 노드 객체가 재할당되지 않는다.
+      console.log(foo); // 1
+    </script>
+  </body>
+</html>
+```
+
+### 태그 이름을 이용한 요소 노드 취득
+
+`Document.prototype/Element.prototype.getElementsByTagName` 메서드는 인수로 전달한 태그 이름을 갖는 모든 요소들을 탐색하여 반환한다. 메서드 이름에 포함된 `Elements`가 복수형인 것에서 알 수 있듯이 `getElementsByTagName` 메서드는 여러 개의 요소 노드 객체를 갖는 DOM 컬렉션 객체인 `HTMLCollection` 객체를 반환한다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <li id="apple">Apple</li>
+      <li id="banana">Banana</li>
+      <li id="orange">Orange</li>
+    </ul>
+    <script>
+      // 태그 이름이 li인 요소 노드를 모두 탐색하여 반환한다.
+      // 탐색된 요소 노드들은 HTMLCollection 객체에 담겨 반환된다.
+      // HTMLCollection 객체는 유사 배열 객체이면서 이터러블이다.
+      const $elems = document.getElementsByTagName('li');
+
+      // 취득한 모든 요소 노드의 style.color 프로퍼티 값을 변경한다.
+      // HTMLCollection 객체를 배열로 변환하여 순회하며 color 프로퍼티 값을 변경한다.
+      [...$elems].forEach((elem) => {
+        elem.style.color = 'red';
+      });
+    </script>
+  </body>
+</html>
+```
+
+함수는 하나의 값만 반환할 수 있으므로 여러 개의 값을 반환하려면 배열이나 객체와 같은 자료구조에 담아 반환해야 한다. `getElementsByTagName` 메서드가 반환하는 DOM 컬렉션 객체인 `HTMLCollection` 객체는 유사 배열 객체이면서 이터러블이다.
+
+HTML 문서의 모든 요소 노드를 취득하려면 `getElementsByTagName` 메서드의 인수로 `'*'`를 전달한다.
+
+```js
+// 모든 요소 노드를 탐색하여 반환한다.
+const $all = document.getElementsByTagName('*');
+// -> HTMLCollection(8) [html, head, body, ul, li#apple, li#banana, li#orange, script, apple: li#apple, banana: li#banana, orange: li#orange]
+```
+
+`getElementsByTagName` 메서드는 `Document.prototype`에 정의된 메서드와 `Element.prototype`에 정의된 메서드가 있다. `Document.prototype.getElementsByTagName` 메서드는 DOM의 루트 노드인 문서 노드, 즉 `document`를 통해 호출하여 DOM 전체에서 요소 노드를 탐색하여 반환한다. 하지만 `Element.prototype.getElementsByTagName` 메서드는 특정 요소 노드를 통해 호출하며, 특정 요소 노드의 자손 노드 중에서 요소 노드를 탐색하여 반환한다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+      <li>Orange</li>
+    </ul>
+    <ul>
+      <li>HTML</li>
+    </ul>
+    <script>
+      // DOM 전체에서 태그 이름이 li인 요소 노드를 모두 탐색하여 반환한다.
+      const $lisFromDocument = document.getElementsByTagName('li');
+      console.log($lisFromDocument); // HTMLCollection(4) [li, li, li, li]
+
+      // ul#fruits 요소의 자손 노드 중에서 태그 이름이 li인 요소 노드를 모두 탐색하여 반환한다.
+      const $fruits = document.getElementsById('fruits');
+      const $lisFromFruits = $fruits.getElementsByTabName('li');
+      console.log($lisFromFruits); // HTMLCollection(3) [li, li, li]
+    </script>
+  </body>
+</html>
+```
+
+만약 인수로 전달된 태그 이름을 갖는 요소가 존재하지 않는 경우 `getElementsByuTabName` 메서드는 빈 `HTMLCollection` 객체를 반환한다.
+
+### `class`를 이용한 요소 노드 취득
+
+`Document.prototype/Element.prototype.getElementsByClassNamle` 메서드는 인수로 전달한 `class` 어트리뷰트 값(이하 `class` 값)을 갖는 모든 요소 노드들을 탐색하여 반환한다. 인수로 전달할 `class` 값은 공백으로 구분하여 여러 개의 `class`를 지정할 수 있다. `getElementsByTagName` 메서드와 마찬가지로 `getElementsByClassName` 메서드는 여러 개의 요소 노드 객체를 갖는 DOM 컬렉션 객체인 `HTMLCollection` 객체를 반환한다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <li id="fruit apple">Apple</li>
+      <li id="fruit banana">Banana</li>
+      <li id="fruit orange">Orange</li>
+    </ul>
+    <script>
+      // class 값이 'fruit'인 요소 노드를 모두 탐색하여 HTMLCollection 객체에 담아 반환한다.
+      const $elem = document.getElementsByClassName('fruit');
+
+      // 취득한 모든 요소의 CSS color 프로퍼티 값을 변경한다.
+      [...$elem].forEach((elem) => {
+        elem.style.color = 'red';
+      });
+
+      // class 값이 'fruit apple'인 요소 노드를 모두 탐색하여 HTMLCollection 객체에 담아 반환한다.
+      const $apples = document.getElementsByClassName('fruit apple');
+
+      // 취득한 모든 요소 노드의 style.color 프로퍼티 값을 변경한다.
+      [...$apples].forEach((elem) => {
+        elem.style.color = 'blue';
+      });
+    </script>
+  </body>
+</html>
+```
+
+`getElementsByTagName` 메서드와 마찬가지로 `getElementsByClassName` 메서드는 `Document.prototype`에 정의된 메서드와 `Element.prototype`에 정의된 메서드가 있다. `Document.prototype.getElementsByClassName` 메서드는 DOM의 루트 노드인 문서 노드, 즉, `documetn`를 통해 호출하며 DOM 전체에서 요소 노드를 탐색하여 반환하고 `Element.prototype.getElementsByClassName` 메서드는 특정 요소 노드를 통해 호출하며 특정 요소 노드의 자손 노드 중에서 요소 노드를 탐색하여 반환한다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="apple">Apple</li>
+      <li class="banana">Banana</li>
+      <li class="orange">Orange</li>
+    </ul>
+    <div class="banana">Banana</div>
+    <script>
+      // DOM 전체에서 class 값이 'banana'인 요소 노드를 모두 탐색하여 반환한다.
+      const $bananasFromDocument = document.getElementsByClassName('banana');
+      console.log($bananasFromDocument); // HTMLCollection(2) [li.banana, div.banana]
+
+      // #fruits 요소의 자손 노드 중에서 class 값이 'banana'인 요소 노드를 모두 탐색하여 반환한다.
+      const $fruits = document.getElementById('fruits');
+      const $bananasFromFruits = $fruits.getElementsByClassName('banana');
+
+      console.log($bananasFromFruits); // HTMLCollection [li.banana]
+    </script>
+  </body>
+</html>
+```
+
+만약 인수로 전달된 `class` 값을 갖는 요소가 존재하지 않는 경우 `getElementsByClassName` 메서드는 빈 `HTMLCollection` 객체를 반환한다.
+
+### CSS 선택자를 이용한 요소 노드 취득
+
+CSS 선택자는 스타일을 적용하고자 하는 HTML 요소를 특정할 때 사용하는 문법이다.
+
+```CSS
+/* 전체 선택자: 모든 요소를 선택 */
+* {...}
+
+/* 태그 선택자: 모든 p 태그 요소를 모두 선택 */
+p {...}
+
+/* id 선택자: id 값이 'foo'인 요소를 모두 선택 */
+#foo {...}
+
+/* class 선택자: class 값이 'foo'인 요소를 모두 선택 */
+.foo {...}
+
+/* 어트리뷰트 선택자: input 요소 중에 type 어트리뷰트 값이 'text'인 요소를 모두 선택 */
+input[type=text] {...}
+
+/* 후손 선택자: div 요소의 후손 요소 중 p 요소를 모두 선택 */
+div p {...}
+
+/* 자식 선택자: div 요소의 자식 요소 중 p 요소를 모두 선택 */
+div > p {...}
+
+/* 인접 형제 선택자: p 요소의 형제 요소 중에 p 요소 바로 뒤에 위치하는 ul 요소를 선택 */
+p + ul {...}
+
+/* 일반 형제 선택자: p 요소의 형제 요소 중에 p 요소 뒤에 위치하는 ul 요소를 모두 선택 */
+p ~ ul {...}
+
+/* 가상 클래스 선택자: hover 상태인 a 요소를 모두 선택 */
+a:hover {...}
+
+/* 가상 요소 선택자: p 요소의 콘텐츠의 앞에 위치하는 공간을 선택
+   일반적으로 content 프로퍼티와 함께 사용된다. */
+p::before {...}
+```
+
+`Document.prototype/Element.prototype.querySelector` 메서드는 인수로 전달한 CSS 선택자를 만족시키는 하나의 요소 노드를 탐색하여 반환한다.
+
+- 인수로 전달한 CSS 선택자를 만족시키는 요소 노드가 여러 개인 경우 첫 번째 요소 노드만 반환한다.
+- 인수로 전달한 CSS 선택자를 만족시키는 요소 노드가 존재하지 않는 경우 `null`을 반환한다.
+- 인수로 전달한 CSS 선택자가 문법에 맞지 않는 경우 `DOMException` 에러가 발생한다.
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <li class="apple">Apple</li>
+      <li class="banana">Banana</li>
+      <li class="orange">Orange</li>
+    </ul>
+    <script>
+      // class 어트리뷰트 값이 'banana'인 첫 번째 요소 노드를 탐색하여 반환한다.
+      const $elem = document.querySelector('.banana');
+
+      // 취득한 요소 노드의 style.color 프로퍼티 값을 변경한다.
+      $elem.style.color = 'red';
+    </script>
+  </body>
+</html>
+```
