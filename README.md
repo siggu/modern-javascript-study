@@ -10,6 +10,8 @@
 
 25장 [클래스](https://github.com/siggu/modern-javascript-study/blob/main/%ED%81%B4%EB%9E%98%EC%8A%A4/class.md)
 
+33장 [Symbol](https://github.com/siggu/modern-javascript-study/blob/main/Symbol/symbol.md)
+
 38장 [브라우저의 렌더링 과정](https://github.com/siggu/modern-javascript-study/blob/main/%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80%EC%9D%98%20%EB%A0%8C%EB%8D%94%EB%A7%81%20%EA%B3%BC%EC%A0%95/browser-rendring.md)
 
 39장 [DOM](https://github.com/siggu/modern-javascript-study/blob/main/DOM/DOM.md)
